@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English for Lawyers - Oral Examination Tool</title>
+    
+    <meta name="theme-color" content="#9d4edd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/9d4edd/ffffff/png?text=Law">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        orchid: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                            main: '#9d4edd', /* Vibrant Orchid Purple */
+                        },
+                        blush: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            main: '#da627d', /* Dusty Rose / Blush Pink */
+                        },
+                        darkgray: {
+                            800: '#1e2022',
+                            900: '#121314',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Hide default number input arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Soft custom scrollbars for interactive lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 9px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d8b4fe;
+            border-radius: 9px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9d4edd;
+        }
+
+        /* Spinning Wheel Glow & Rotation Effects */
+        .wheel-shadow {
+            box-shadow: 0 10px 30px -5px rgba(157, 78, 221, 0.2);
+        }
+
+        /* Pulsing animations */
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.95; }
+        }
+        .pulse-spin {
+            animation: subtlePulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="h-16 px-6 bg-white border-b border-gray-200 flex items-center justify-between shadow-sm z-30 select-none">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orchid-main to-blush-main flex items-center justify-center text-white shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg text-orchid-main tracking-tight">English for Lawyers</h1>
+                <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Oral Examination Suite</p>
+            </div>
+        </div>
+
+        <nav class="flex items-center bg-gray-100 p-1.5 rounded-xl gap-1">
+            <button onclick="switchTab(1)" id="tab-btn-1" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm bg-orchid-main text-white">
+                1. Warm-Up
+            </button>
+            <button onclick="switchTab(2)" id="tab-btn-2" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-gray-500 hover:text-gray-800">
+                2. Main Topic
+            </button>
+            <button onclick="switchTab(3)" id="tab-btn-3" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-gray-500 hover:text-gray-800">
+                3. Legal Vocabulary
+            </button>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-4 py-1.5 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-orchid-300">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                
+                <div class="flex items-center text-orchid-400 font-mono font-bold text-lg tracking-wider">
+                    <input id="timer-minutes" type="number" value="15" min="0" max="99" class="w-6 bg-transparent text-center text-orchid-400 focus:text-white outline-none" title="Click to edit minutes" onchange="timerEdited()" onfocus="timerFocus()">
+                    <span class="mx-0.5 text-orchid-500 select-none animate-pulse" id="timer-colon">:</span>
+                    <input id="timer-seconds" type="number" value="00" min="0" max="59" class="w-6 bg-transparent text-center text-orchid-400 focus:text-white outline-none" title="Click to edit seconds" onchange="timerEdited()" onfocus="timerFocus()">
+                </div>
+
+                <button onclick="toggleTimer()" id="play-pause-btn" class="ml-2 w-8 h-8 rounded-lg bg-orchid-800 hover:bg-orchid-700 text-white flex items-center justify-center transition-all shadow-md focus:outline-none" title="Start / Pause Countdown">
+                    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-4 h-4 hidden">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                </button>
+            </div>
+
+            <button onclick="toggleSettingsModal(true)" class="p-2.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-orchid-main transition-all" title="Configure Exam Pools">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.645-.869l.214-1.28z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-h-[calc(100vh-5rem)] p-6 flex flex-col justify-between overflow-hidden relative">
+
+        <div id="tab-content-1" class="tab-view flex flex-col justify-between h-full w-full gap-4">
+            <div class="flex-1 flex flex-col justify-center items-center">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+                    <div class="bg-white rounded-2xl p-10 shadow-md border-l-4 border-orchid-main hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group flex items-center min-h-[200px]">
+                        <div class="absolute -right-4 -bottom-4 text-orchid-50 opacity-40 group-hover:scale-110 transition-transform duration-300 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-24 h-24">
+                                <path d="M11.19 12.017c0-1.803-.518-3.419-1.553-4.849C8.612 5.75 7.162 4.721 5 4.31v2.757c1.162.31 1.954.918 2.378 1.825.423.908.636 1.892.636 2.95H5v8.218h7l-.81-8.035zM20 12.017c0-1.803-.518-3.419-1.553-4.849C17.422 5.75 15.972 4.721 13.81 4.31v2.757c1.162.31 1.954.918 2.378 1.825.423.908.636 1.892.636 2.95H13.81v8.218h7l-.81-8.035z"/>
+                            </svg>
+                        </div>
+                        <p id="warmup-q1" class="text-2xl font-semibold text-gray-800 leading-relaxed pr-6 z-10 w-full text-center md:text-left">
+                            Loading introductory warm-up prompt...
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-10 shadow-md border-l-4 border-blush-main hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group flex items-center min-h-[200px]">
+                        <div class="absolute -right-4 -bottom-4 text-blush-50 opacity-40 group-hover:scale-110 transition-transform duration-300 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-24 h-24">
+                                <path d="M11.19 12.017c0-1.803-.518-3.419-1.553-4.849C8.612 5.75 7.162 4.721 5 4.31v2.757c1.162.31 1.954.918 2.378 1.825.423.908.636 1.892.636 2.95H5v8.218h7l-.81-8.035zM20 12.017c0-1.803-.518-3.419-1.553-4.849C17.422 5.75 15.972 4.721 13.81 4.31v2.757c1.162.31 1.954.918 2.378 1.825.423.908.636 1.892.636 2.95H13.81v8.218h7l-.81-8.035z"/>
+                            </svg>
+                        </div>
+                        <p id="warmup-q2" class="text-2xl font-semibold text-gray-800 leading-relaxed pr-6 z-10 w-full text-center md:text-left">
+                            Loading introductory warm-up prompt...
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 mt-8">
+                    <button onclick="rerollWarmups()" class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-xl font-semibold shadow-sm transition-all hover:scale-105 active:scale-95">
+                        <span class="text-base">🔄</span> Swap Questions
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end p-2 select-none">
+                <button onclick="switchTab(2)" class="px-7 py-3.5 bg-blush-main hover:bg-blush-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-2">
+                    Next Part: Main Topic ➔
+                </button>
+            </div>
+        </div>
+
+
+        <div id="tab-content-2" class="tab-view hidden grid grid-cols-12 gap-6 h-full w-full overflow-hidden select-none">
+            
+            <div class="col-span-7 bg-white rounded-2xl p-4 flex flex-col justify-center items-center shadow-md relative overflow-hidden border border-gray-100">
+                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 uppercase tracking-widest">The Law Wheel</h3>
+
+                <div class="w-full h-full flex items-center justify-center relative mt-4">
+                    <div class="absolute top-1 z-20 transform -translate-x-1/2 left-1/2 filter drop-shadow">
+                        <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg" id="wheel-pointer" class="transition-transform duration-75 origin-top">
+                            <path d="M17 26L33.4545 0.5H0.545517L17 26Z" fill="#da627d"/>
+                        </svg>
+                    </div>
+
+                    <div class="relative w-full h-full max-w-[400px] max-h-[400px] flex items-center justify-center">
+                        <canvas id="wheel-canvas" class="w-full h-full block rounded-full wheel-shadow transition-transform duration-100"></canvas>
+
+                        <button onclick="spinTheWheel()" id="spin-center-btn" class="absolute w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center text-gray-800 font-extrabold text-xs shadow-2xl border-4 border-orchid-main hover:scale-110 active:scale-95 transition-transform duration-150 z-20 focus:outline-none pulse-spin">
+                            <span class="text-xs tracking-wider uppercase">SPIN</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-5 flex flex-col justify-between h-full overflow-hidden">
+                <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+                    
+                    <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-md flex flex-col border border-slate-800">
+                        <span class="text-[10px] uppercase font-bold text-orchid-300 tracking-widest">Selected Examination Topic</span>
+                        <div id="selected-topic-display" class="text-xl font-bold mt-2 text-white leading-snug tracking-tight">
+                            <span class="text-gray-400 italic font-normal text-base">Press the center SPIN button to randomise & allocate a main legal syllabus topic.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 bg-white rounded-2xl p-5 shadow-md flex flex-col overflow-hidden border border-gray-100">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+                            <div>
+                                <h4 class="font-extrabold text-sm text-gray-800 uppercase tracking-wider">Teacher Guidance Questions</h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Check off questions as you go during the dialogue.</p>
+                            </div>
+                            <span class="px-2.5 py-1 bg-gray-100 rounded text-[11px] font-bold text-gray-500">Teacher View</span>
+                        </div>
+
+                        <div id="followups-container" class="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-2">
+                            <div class="flex flex-col items-center justify-center text-center h-full text-gray-400 p-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-300 mb-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                </svg>
+                                <p class="text-xs">Follow-up inquiries mapped directly to the active syllabus segment will spawn here automatically upon completion of the wheel spin.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end p-2 select-none mt-4">
+                    <button onclick="switchTab(3)" class="px-7 py-3.5 bg-blush-main hover:bg-blush-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-2">
+                        Next Part: Terminology ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-content-3" class="tab-view hidden flex flex-col justify-between h-full w-full gap-4">
+            <div class="flex-1 flex flex-col justify-center items-center w-full">
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl px-4 select-none">
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-orchid-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-orchid-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t1" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-blush-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-blush-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t2" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-orchid-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-orchid-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t3" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-blush-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-blush-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t4" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-orchid-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-orchid-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t5" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-blush-main hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center relative group overflow-hidden min-h-[160px] text-center">
+                        <div class="absolute right-0 top-0 w-16 h-16 -mr-4 -mt-4 bg-blush-50 rounded-full transition-transform duration-300 group-hover:scale-125 pointer-events-none -z-0"></div>
+                        <div class="z-10 w-full">
+                            <p id="vocab-t6" class="text-xl font-black text-slate-800 leading-normal tracking-tight break-words">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 mt-12">
+                    <button onclick="rerollVocabularies()" class="px-6 py-3 bg-blush-50 hover:bg-blush-100 text-blush-600 font-bold rounded-xl shadow-sm border border-blush-200 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                        🎲 Reroll Terms
+                    </button>
+                    <button onclick="finishExam()" class="px-8 py-3 bg-orchid-main hover:bg-orchid-600 text-white font-extrabold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                        🏁 Finish Exam
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="h-2.5 bg-gray-200 relative w-full overflow-hidden select-none">
+        <div id="footer-progress-bar" class="h-full bg-orchid-main transition-all duration-300 ease-linear" style="width: 100%;"></div>
+    </footer>
+
+
+    <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 p-4">
+        <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300">
+            <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-orchid-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                    </svg>
+                    <div>
+                        <h3 class="font-bold text-lg">System Configuration Console</h3>
+                        <p class="text-[10px] uppercase font-bold text-orchid-300 tracking-wider">Dynamic Exam Pools & Settings</p>
+                    </div>
+                </div>
+                <button onclick="toggleSettingsModal(false)" class="text-slate-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-hidden flex bg-gray-50">
+                <div class="w-1/4 border-r border-gray-200 bg-white p-4 flex flex-col gap-2">
+                    <button onclick="switchSettingsTab('warmups')" id="settings-btn-warmups" class="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold bg-orchid-50 text-orchid-700 transition-all">
+                        📝 Warm-Ups
+                    </button>
+                    <button onclick="switchSettingsTab('topics')" id="settings-btn-topics" class="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all">
+                        🎡 Wheel Syllabus
+                    </button>
+                    <button onclick="switchSettingsTab('vocabularies')" id="settings-btn-vocabularies" class="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all">
+                        📖 Vocabulary List
+                    </button>
+                </div>
+
+                <div class="w-3/4 p-6 flex flex-col justify-between overflow-hidden">
+                    <div id="settings-panel-warmups" class="settings-panel flex-1 flex flex-col gap-2 overflow-hidden">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Warm-Up Question Pool (One question per line)</label>
+                        <textarea id="edit-warmups-input" class="flex-1 w-full bg-white border border-gray-200 rounded-xl p-4 font-mono text-sm focus:outline-none focus:border-orchid-main custom-scrollbar resize-none"></textarea>
+                    </div>
+
+                    <div id="settings-panel-topics" class="settings-panel hidden flex-1 flex flex-col gap-2 overflow-hidden">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Topic-to-Question JSON Syllabus Structure</label>
+                            <span class="text-[10px] text-gray-400 uppercase font-mono">15 items required</span>
+                        </div>
+                        <textarea id="edit-topics-input" class="flex-1 w-full bg-white border border-gray-200 rounded-xl p-4 font-mono text-xs focus:outline-none focus:border-orchid-main custom-scrollbar resize-none"></textarea>
+                        <div id="json-error-box" class="hidden bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl p-3 font-mono leading-relaxed max-h-20 overflow-y-auto"></div>
+                    </div>
+
+                    <div id="settings-panel-vocabularies" class="settings-panel hidden flex-1 flex flex-col gap-2 overflow-hidden">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Master Legal Vocabulary List (Comma separated)</label>
+                        <textarea id="edit-vocabularies-input" class="flex-1 w-full bg-white border border-gray-200 rounded-xl p-4 font-mono text-sm focus:outline-none focus:border-orchid-main custom-scrollbar resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-100 border-t border-gray-200 flex justify-between items-center select-none">
+                <button onclick="restoreDefaults()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-xl text-sm transition-all">
+                    Reset to Defaults
+                </button>
+                <div class="flex gap-3">
+                    <button onclick="toggleSettingsModal(false)" class="px-5 py-2.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold rounded-xl text-sm transition-all">
+                        Cancel
+                    </button>
+                    <button onclick="saveConfigurations()" class="px-6 py-2.5 bg-orchid-main hover:bg-orchid-600 text-white font-extrabold rounded-xl text-sm transition-all shadow-md">
+                        Save Configurations
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        /* ==================== DEFAULT POOL DATA INITIALIZATION ==================== */
+        const DEFAULT_WAR_UP_QUESTIONS = [
+            "If you weren't studying here, what would you be probably doing?",
+            "What surprised you the most about your studies?",
+            "Would you rather work four 10-hour days or five 8-hour days per week?",
+            "Why did you choose to study at the Faculty of Law?",
+            "How do you like your studies at this faculty?",
+            "Have you already decided which area of law you would like to practise in?",
+            "What are some current human rights issues?",
+            "Are the legal professions prestigious ones?",
+            "How do you manage stress during intense periods of study?",
+            "If you could intern with any legal professional or organization in the world, who would it be and why?",
+            "In your opinion, what is the most challenging aspect of legal studies?",
+            "What recent legal case have you found particularly interesting, and why?",
+            "How do you think technology is impacting the legal profession?",
+            "If you could practise law in any country, where would you choose and why?",
+            "How do you stay updated with current legal developments and news?",
+            "What book (legal or non-legal) have you read recently that made a significant impact on you, and in what way?"
+        ];
+
+        const DEFAULT_TOPICS = [
+            {
+                title: "Introduction to Law and Sources of Law",
+                short: "Intro & Sources",
+                questions: [
+                    "What are the pros and cons of jury system?",
+                    "Introduce the two main legal systems in the world (common and civil law). What is the difference between Common Law and Equity?",
+                    "What the advantages and disadvantages of these systems?",
+                    "What is the difference between descriptive and prescriptive laws?",
+                    "Three kinds of prescriptive laws and penalties for their violation.",
+                    "How an injury may be dealt with?",
+                    "Types of legislation.",
+                    "Describe the legislative process."
+                ]
+            },
+            {
+                title: "Division of Law",
+                short: "Division of Law",
+                questions: [
+                    "What are the main branches of law (private and public law)?",
+                    "Compare and contrast civil and criminal procedures (describe the procedures including the parties, the possible result and standard of proof).",
+                    "How does the system of courts work (in the UK and the CR)? (compare these two systems)"
+                ]
+            },
+            {
+                title: "Legal Profession and Legal Language",
+                short: "Legal Profession",
+                questions: [
+                    "If you were to choose your career in England, would you rather become a barrister or a solicitor? And why?",
+                    "Who is a legal trainee and what is his/her legal position?",
+                    "What is legalese and Plain English?",
+                    "How to become a lawyer in England?",
+                    "Legal profession in England, the USA and the CR."
+                ]
+            },
+            {
+                title: "Contracts",
+                short: "Contracts",
+                questions: [
+                    "What are the essential elements of a contract?",
+                    "What types of contracts do you know?",
+                    "How can a contract be discharged?",
+                    "How often do you conclude a contract?"
+                ]
+            },
+            {
+                title: "Criminal Law and Procedure",
+                short: "Criminal Law",
+                questions: [
+                    "List the steps of criminal procedure",
+                    "What must be proven in a crime? (Actus Reus and one kind of Mens Rea)",
+                    "Two types of criminal procedure.",
+                    "Questions of law and questions of fact.",
+                    "The principle behind the jury system - advantages and disadvantages.",
+                    "Defences in criminal law.",
+                    "Types of punishment.",
+                    "Crimes and their definitions.",
+                    "What do you think of death penalty? Should it be re-introduced in our country and why/why not?"
+                ]
+            },
+            {
+                title: "Law of Torts",
+                short: "Law of Torts",
+                questions: [
+                    "What are the elements required to establish negligence?",
+                    "Types of tort and their definitions.",
+                    "Differences between torts and crimes.",
+                    "Defences in tort (voluntary assumption of risk and inevitable accident).",
+                    "Defamation - public figures - Would you rather defend a celebrity or a newspaper and why?",
+                    "Defamation - facts x opinions",
+                    "Self-defense x unreasonable force",
+                    "Do you know any frivolous lawsuits? What do you think of them?"
+                ]
+            },
+            {
+                title: "Law of Property and Law of Trusts",
+                short: "Property & Trusts",
+                questions: [
+                    "Two kinds of estate (=right to land). Explain the difference between a leaseholder and a freeholder - synonyms.",
+                    "What are the purposes that English law establishes for a trust to be considered a charity?",
+                    "The division of property.",
+                    "Two rights and two duties of the leaseholder, what happens in the case of failure.",
+                    "Two kinds of legal interest.",
+                    "What is involved in conveyancing?",
+                    "Describe what happens to the property of a deceased person.",
+                    "What happens if a person dies intestate?",
+                    "Why do people make a will?",
+                    "Types of trust.",
+                    "Requirements for a trust be valid."
+                ]
+            },
+            {
+                title: "Intellectual Property",
+                short: "Intellectual Prop.",
+                questions: [
+                    "Types of intellectual property.",
+                    "What is the difference between copyright and patent?",
+                    "Fair dealing.",
+                    "Neighbouring rights and rights of action.",
+                    "Do you agree that copying and downloading at home is just as bad as stealing from a store? Give arguments."
+                ]
+            },
+            {
+                title: "Running a business",
+                short: "Running Business",
+                questions: [
+                    "Types of business organization.",
+                    "Advantages and disadvantages of different types of business (a self-employed hairdresser trying to expand her business - what would you suggest and why? Other examples...)",
+                    "Raising capital.",
+                    "Setting up a limited company.",
+                    "Insider trading.",
+                    "Termination of company."
+                ]
+            },
+            {
+                title: "Civil Procedure",
+                short: "Civil Procedure",
+                questions: [
+                    "Steps in civil procedure.",
+                    "Alternative dispute resolution (advantages x disadvantages)."
+                ]
+            },
+            {
+                title: "Sale of Goods",
+                short: "Sale of Goods",
+                questions: [
+                    "Consumer and consumer law.",
+                    "Buying a faulty product.",
+                    "Implied terms in consumer contracts.",
+                    "When time is of the essence?",
+                    "Disclaimers.",
+                    "Product liability - England and the USA."
+                ]
+            },
+            {
+                title: "Family Law",
+                short: "Family Law",
+                questions: [
+                    "The beginning and termination of marriage.",
+                    "Reasons for nullification.",
+                    "Describe divorce proceedings.",
+                    "Other forms of living together (advantages of being married and disadvantages)",
+                    "Types of custody? Advantages and disadvantages.",
+                    "Is it a good idea to make a pre-nuptial agreement and why/why not?",
+                    "What are the requirements for a foreigner getting married in the CR?"
+                ]
+            },
+            {
+                title: "Civil and Political Rights",
+                short: "Civil & Pol. Rights",
+                questions: [
+                    "Approaches to civil and human rights.",
+                    "Civil vs political rights.",
+                    "Constitution and Bills of Rights.",
+                    "Explain the concept of separation of power and the system of checks and balances.",
+                    "Describe the process of election."
+                ]
+            },
+            {
+                title: "Human Rights",
+                short: "Human Rights",
+                questions: [
+                    "What is the most famous organization for protection of human rights? Tell me something about its aims and history.",
+                    "What was the Mignonette case and why is it important?",
+                    "Compare the two documents concerning human rights (UDHR and ECHR)",
+                    "The issue of human rights in international relations.",
+                    "Violations of humans rights: AI (origins, aims and methods. Salmon Rushdie), refugees.",
+                    "Freedom of speech - are there any limitations? freedom of speech x freedom of religion",
+                    "Which human right do you consider as the most important and why?"
+                ]
+            },
+            {
+                title: "Employment Law",
+                short: "Employment Law",
+                questions: [
+                    "The development of employees’ rights (three stages and typical features).",
+                    "Termination of employment.",
+                    "Collective bargaining.",
+                    "Employer-employee disputes",
+                    "How can an employment be terminated?",
+                    "What are rights of an employee/employer?",
+                    "What are duties of an employee/employer?",
+                    "Give at least 3 reasons for a justifiable discharge?"
+                ]
+            }
+        ];
+
+        const DEFAULT_VOCABULARY = [
+            "Equity", "precedent", "statute", "common law", "civil law", "private law", "public law", "substantive law", "procedural law", "presumption of innocence", "burden of proof", "standards of proof", "Barrister", "Solicitor", "Bar", "Attorney", "Notary", "Legal Trainee", "legalese", "Paralegal", "Counsel", "consideration", "legal capacity", "express contracts", "implied contracts", "void contract", "voidable contracts", "injunction", "specific performance", "damages", "waiver", "force majeure", "limitation of action", "statute-barred claim", "custody (in criminal law)", "manslaughter", "malice aforethought", "Mens Rea", "Actus Reus", "defences", "duress", "community service", "parole", "suspended sentence", "probation", "acquittal", "plea-taking", "bail", "conviction", "sentence", "frivolous lawsuit", "strict liability", "vicarious liability", "negligence", "malpractice", "tortfeasor", "trespass", "false imprisonment", "defamation", "nuisance", "proximate cause", "freeholder", "leaseholder", "rent arrears", "eviction", "easement", "mortgage", "landlord", "tenant", "title deeds", "probate", "(to die) intestate", "trust", "settlor", "beneficiary", "trustee", "patent", "copyright", "trademark", "passing-off", "seizure of illicit goods", "sole trader", "limited liability", "partnership", "shareholder", "Stock Exchange", "subsidiary", "debentures / bonds", "dividend", "Memorandum of Association", "Articles of Association", "insider trading / dealing", "stockbroker", "winding-up", "Plaintiff", "defendant", "pleadings", "ADR (alternative dispute resolution)", "writ of summons", "affidavit", "arbitration", "mediation", "contempt of court", "attachment of earnings / wage garnishment", "purchaser", "vendor", "disclaimer", "product liability", "spouse", "fault divorce", "no-fault divorce", "maintenance obligation", "adultery", "nullification of marriage", "consummation of marriage", "petitioner", "respondent", "community property", "separate property", "alimony", "cohabitation (in family law)", "custody (in family law)", "Bill of Rights", "separation of powers", "election", "ballot box", "legislative power", "judiciary power", "executive power", "suffrage", "civil rights", "asylum", "prisoners of conscience", "refugee", "slavery", "torture", "assembly and association", "probationary period", "trade unions", "collective bargaining", "sick leave", "unemployment benefit", "justifiable discharge", "wrongful discharge (unfair dismissal)", "redundancy", "period of notice", "gross misconduct", "promotion", "grievance procedure (in employment law)"
+        ];
+
+        /* ==================== STATE MANAGEMENT ==================== */
+        let appState = {
+            warmupPool: [...DEFAULT_WAR_UP_QUESTIONS],
+            topicsPool: JSON.parse(JSON.stringify(DEFAULT_TOPICS)),
+            vocabularyPool: [...DEFAULT_VOCABULARY],
+
+            activeTab: 1,
+            selectedWarmupQuestions: [],
+            lastSpunIndex: -1,
+            currentSpunIndex: -1,
+            selectedVocabularies: [],
+
+            // Timer state
+            timerTotalSeconds: 15 * 60, // Default 15 mins
+            timerRemainingSeconds: 15 * 60,
+            timerInterval: null,
+            timerIsRunning: false,
+
+            // Sound configurations
+            audioInitialized: false,
+        };
+
+        // Load configurations from LocalStorage if present
+        function loadStorage() {
+            if(localStorage.getItem('efl_warmupPool')) {
+                appState.warmupPool = JSON.parse(localStorage.getItem('efl_warmupPool'));
+            }
+            if(localStorage.getItem('efl_topicsPool')) {
+                appState.topicsPool = JSON.parse(localStorage.getItem('efl_topicsPool'));
+            }
+            if(localStorage.getItem('efl_vocabularyPool')) {
+                appState.vocabularyPool = JSON.parse(localStorage.getItem('efl_vocabularyPool'));
+            }
+        }
+
+        function saveStorage() {
+            localStorage.setItem('efl_warmupPool', JSON.stringify(appState.warmupPool));
+            localStorage.setItem('efl_topicsPool', JSON.stringify(appState.topicsPool));
+            localStorage.setItem('efl_vocabularyPool', JSON.stringify(appState.vocabularyPool));
+        }
+
+
+        /* ==================== AUDIO SYNTHESIS ==================== */
+        let boundarySynth, chordSynth;
+
+        function initializeAudio() {
+            if (appState.audioInitialized) return;
+            try {
+                // Short sine wave click synthesizer for wheel ticks
+                boundarySynth = new Tone.Synth({
+                    oscillator: { type: 'sine' },
+                    envelope: { attack: 0.001, decay: 0.08, sustain: 0, release: 0.05 }
+                }).toDestination();
+                boundarySynth.volume.value = -6; // Soften volume
+
+                // Lovely polyphonic synth for success chiming
+                chordSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.05, decay: 0.2, sustain: 0.3, release: 0.8 }
+                }).toDestination();
+                chordSynth.volume.value = -8;
+
+                appState.audioInitialized = true;
+                console.log("Audio synthesizers successfully initiated.");
+            } catch (err) {
+                console.warn("Audio synthesis initialization failed: ", err);
+            }
+        }
+
+
+        /* ==================== DIGITAL TIMER SYSTEM ==================== */
+        function toggleTimer() {
+            initializeAudio(); // Initialize audio on first user touch / click
+            
+            if (appState.timerIsRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            if (appState.timerIsRunning) return;
+            
+            appState.timerIsRunning = true;
+            document.getElementById('play-icon').classList.add('hidden');
+            document.getElementById('pause-icon').classList.remove('hidden');
+
+            appState.timerInterval = setInterval(() => {
+                if (appState.timerRemainingSeconds > 0) {
+                    appState.timerRemainingSeconds--;
+                    updateTimerDisplay();
+                    updateProgressBar();
+                } else {
+                    triggerTimeUpChime();
+                    pauseTimer();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            appState.timerIsRunning = false;
+            document.getElementById('play-icon').classList.remove('hidden');
+            document.getElementById('pause-icon').classList.add('hidden');
+            
+            if (appState.timerInterval) {
+                clearInterval(appState.timerInterval);
+                appState.timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(appState.timerRemainingSeconds / 60);
+            const secs = appState.timerRemainingSeconds % 60;
+            
+            document.getElementById('timer-minutes').value = String(mins).padStart(2, '0');
+            document.getElementById('timer-seconds').value = String(secs).padStart(2, '0');
+        }
+
+        function timerFocus() {
+            pauseTimer();
+        }
+
+        function timerEdited() {
+            const minInput = document.getElementById('timer-minutes');
+            const secInput = document.getElementById('timer-seconds');
+            
+            let m = parseInt(minInput.value) || 0;
+            let s = parseInt(secInput.value) || 0;
+
+            if (m < 0) m = 0;
+            if (m > 99) m = 99;
+            if (s < 0) s = 0;
+            if (s > 59) {
+                m += Math.floor(s / 60);
+                s = s % 60;
+            }
+
+            appState.timerTotalSeconds = (m * 60) + s;
+            appState.timerRemainingSeconds = appState.timerTotalSeconds;
+            
+            updateTimerDisplay();
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const pBar = document.getElementById('footer-progress-bar');
+            let percentage = 0;
+            
+            if (appState.timerTotalSeconds > 0) {
+                percentage = (appState.timerRemainingSeconds / appState.timerTotalSeconds) * 100;
+            }
+
+            pBar.style.width = `${percentage}%`;
+
+            if (appState.timerRemainingSeconds <= 120) {
+                pBar.classList.remove('bg-orchid-main');
+                pBar.classList.add('bg-blush-main');
+            } else {
+                pBar.classList.remove('bg-blush-main');
+                pBar.classList.add('bg-orchid-main');
+            }
+        }
+
+        function triggerTimeUpChime() {
+            if (!appState.audioInitialized) return;
+            try {
+                const now = Tone.now();
+                chordSynth.triggerAttackRelease(["C4", "E4", "G4"], "4n", now);
+                chordSynth.triggerAttackRelease(["C4", "E4", "G4"], "4n", now + 0.4);
+            } catch (e) {}
+        }
+
+
+        /* ==================== CANVAS SPINNING WHEEL SETUP & FIX ==================== */
+        const canvas = document.getElementById('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let wheelConfig = {
+            currentAngle: 0,
+            isSpinning: false,
+            spinDuration: 2500, // Speed up stopping sequence (2.5s)
+            spinStart: 0,
+            targetAngle: 0,
+            startAngle: 0,
+            lastSegmentSoundIdx: -1,
+        };
+
+        const segmentColors = [
+            '#f3e8ff', // ultra-light Orchid
+            '#f8fafc', // ultra-light neutral grey
+            '#ffe4e6', // ultra-light Blush pink
+            '#e9d5ff', // soft Orchid
+            '#f1f5f9', // soft gray
+            '#fecdd3', // soft Blush pink
+            '#d8b4fe', // pastel Orchid
+            '#e2e8f0', // deep light gray
+            '#fda4af'  // strong Blush pink
+        ];
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            if (!container) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // CRITICAL: If container is hidden (dimension is 0) do not compute scale or draw to prevent negative radius crashes.
+            if (width === 0 || height === 0) {
+                return;
+            }
+
+            const size = Math.min(width, height, 400);
+            if (size < 20) return; // Prevent calculations on extremely miniature or collapsed layouts.
+
+            canvas.width = size * window.devicePixelRatio;
+            canvas.height = size * window.devicePixelRatio;
+            canvas.style.width = `${size}px`;
+            canvas.style.height = `${size}px`;
+            
+            ctx.resetTransform();
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            drawWheel();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawWheel() {
+            const numSegments = appState.topicsPool.length;
+            if (numSegments === 0) return;
+
+            // Compute size safely based on canvas styles
+            const size = parseFloat(canvas.style.width) || canvas.width / (window.devicePixelRatio || 1);
+            if (size < 20) return; // Ignore rendering if size collapses.
+
+            const cx = size / 2;
+            const cy = size / 2;
+            
+            // Safeguard calculation: enforce a absolute minimum positive radius
+            const radius = Math.max(10, size * 0.47);
+            const arc = (2 * Math.PI) / numSegments;
+
+            ctx.clearRect(0, 0, size, size);
+
+            // Draw shadow base ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = 'rgba(157, 78, 221, 0.15)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+            ctx.fill();
+            ctx.shadowBlur = 0; // Reset shadow configurations
+            ctx.shadowOffsetY = 0;
+
+            // Draw slices
+            for (let i = 0; i < numSegments; i++) {
+                const angle = wheelConfig.currentAngle + (i * arc);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                
+                // SAFEGUARD: Ensure radius calculation inside arc is always strictly positive
+                const sliceRadius = Math.max(1, radius - 4);
+                ctx.arc(cx, cy, sliceRadius, angle, angle + arc);
+                ctx.closePath();
+
+                ctx.fillStyle = segmentColors[i % segmentColors.length];
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Render Labels Radiating outwards
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + (arc / 2));
+                
+                let labelText = appState.topicsPool[i].short || appState.topicsPool[i].title;
+                if (labelText.length > 18) {
+                    labelText = labelText.substring(0, 16) + '...';
+                }
+
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#475569';
+                ctx.font = 'bold 9px "Inter", sans-serif';
+                ctx.fillText(labelText, radius - 15, 0);
+                ctx.restore();
+            }
+
+            // Draw center ring border with clamped radius values
+            const centerRingRadius = Math.max(1, Math.min(42, radius * 0.3));
+            ctx.beginPath();
+            ctx.arc(cx, cy, centerRingRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#e9d5ff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+
+        /* ==================== WHEEL ANIMATION DYNAMICS ==================== */
+        function spinTheWheel() {
+            if (wheelConfig.isSpinning) return;
+            
+            initializeAudio(); // Initial interaction sound triggers
+            
+            const numSegments = appState.topicsPool.length;
+            if (numSegments === 0) return;
+
+            let selectedIndex;
+            do {
+                selectedIndex = Math.floor(Math.random() * numSegments);
+            } while (selectedIndex === appState.lastSpunIndex && numSegments > 1);
+
+            appState.currentSpunIndex = selectedIndex;
+
+            const arc = (2 * Math.PI) / numSegments;
+            const targetLocalAngle = (selectedIndex + 0.5) * arc;
+            const extraSpins = 5; 
+            
+            const targetRotation = (extraSpins * 2 * Math.PI) - (0.5 * Math.PI) - targetLocalAngle;
+            
+            wheelConfig.isSpinning = true;
+            wheelConfig.spinStart = performance.now();
+            wheelConfig.startAngle = wheelConfig.currentAngle % (2 * Math.PI);
+            wheelConfig.targetAngle = targetRotation;
+            wheelConfig.lastSegmentSoundIdx = -1;
+
+            const spinBtn = document.getElementById('spin-center-btn');
+            spinBtn.disabled = true;
+            spinBtn.classList.remove('pulse-spin');
+            spinBtn.innerText = "SPINNING";
+
+            requestAnimationFrame(animateWheel);
+        }
+
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
+        }
+
+        function animateWheel(now) {
+            const elapsed = now - wheelConfig.spinStart;
+            const progress = Math.min(elapsed / wheelConfig.spinDuration, 1);
+            
+            const easeProgress = easeOutCubic(progress);
+            wheelConfig.currentAngle = wheelConfig.startAngle + (wheelConfig.targetAngle - wheelConfig.startAngle) * easeProgress;
+
+            const numSegments = appState.topicsPool.length;
+            const arc = (2 * Math.PI) / numSegments;
+            
+            const relativeAngle = (-0.5 * Math.PI - wheelConfig.currentAngle) % (2 * Math.PI);
+            const normalizedAngle = relativeAngle < 0 ? relativeAngle + (2 * Math.PI) : relativeAngle;
+            const segmentCrossingIdx = Math.floor(normalizedAngle / arc) % numSegments;
+
+            if (segmentCrossingIdx !== wheelConfig.lastSegmentSoundIdx) {
+                if (appState.audioInitialized && wheelConfig.lastSegmentSoundIdx !== -1) {
+                    try {
+                        boundarySynth.triggerAttackRelease("C6", "32n", undefined, 0.4);
+                    } catch (e) {}
+                    wigglePointer();
+                }
+                wheelConfig.lastSegmentSoundIdx = segmentCrossingIdx;
+            }
+
+            drawWheel();
+
+            if (progress < 1) {
+                requestAnimationFrame(animateWheel);
+            } else {
+                finalizeSpin();
+            }
+        }
+
+        function wigglePointer() {
+            const pointer = document.getElementById('wheel-pointer');
+            pointer.style.transform = "translateX(-50%) rotate(-15deg)";
+            setTimeout(() => {
+                pointer.style.transform = "translateX(-50%) rotate(0deg)";
+            }, 50);
+        }
+
+        function finalizeSpin() {
+            wheelConfig.isSpinning = false;
+            appState.lastSpunIndex = appState.currentSpunIndex;
+
+            const spinBtn = document.getElementById('spin-center-btn');
+            spinBtn.disabled = false;
+            spinBtn.classList.add('pulse-spin');
+            spinBtn.innerText = "SPIN";
+
+            if (appState.audioInitialized) {
+                try {
+                    chordSynth.triggerAttackRelease(["E5", "G5", "C6"], "8n");
+                } catch (e) {}
+            }
+
+            const winner = appState.topicsPool[appState.currentSpunIndex];
+            const winner_index = appState.currentSpunIndex;
+            const displayBox = document.getElementById('selected-topic-display');
+            displayBox.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 bg-orchid-500 text-white rounded text-[10px] uppercase font-extrabold">Syllabus Topic ${winner_index + 1}</span>
+                </div>
+                <div class="mt-2 text-2xl font-black text-white leading-tight">${winner.title}</div>
+            `;
+
+            const followUpContainer = document.getElementById('followups-container');
+            followUpContainer.innerHTML = '';
+            
+            if (winner.questions && winner.questions.length > 0) {
+                winner.questions.forEach((q, index) => {
+                    const row = document.createElement('div');
+                    row.className = "flex items-start gap-3 p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100/50 transition-colors cursor-pointer select-none";
+                    row.onclick = () => toggleCheckRow(row);
+                    row.innerHTML = `
+                        <div class="w-5 h-5 rounded border border-gray-300 bg-white flex items-center justify-center text-white mt-0.5 transition-all select-none col-span-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-3.5 h-3.5 hidden">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </div>
+                        <div class="flex-1 text-sm text-gray-700 font-medium leading-relaxed select-none">
+                            <span class="text-xs font-bold text-orchid-500">${index + 1}.</span> ${q}
+                        </div>
+                    `;
+                    followUpContainer.appendChild(row);
+                });
+            } else {
+                followUpContainer.innerHTML = `<p class="text-xs text-gray-400 italic text-center py-4">No follow up questions available for this segment.</p>`;
+            }
+        }
+
+        function toggleCheckRow(element) {
+            const checkBox = element.querySelector('div');
+            const svg = checkBox.querySelector('svg');
+            const isChecked = !svg.classList.contains('hidden');
+
+            if (isChecked) {
+                svg.classList.add('hidden');
+                checkBox.classList.remove('bg-orchid-main', 'border-orchid-main');
+                checkBox.classList.add('bg-white', 'border-gray-300');
+                element.classList.remove('bg-orchid-50/40', 'border-orchid-200');
+                element.classList.add('bg-gray-50', 'border-gray-100');
+            } else {
+                svg.classList.remove('hidden');
+                checkBox.classList.add('bg-orchid-main', 'border-orchid-main');
+                checkBox.classList.remove('bg-white', 'border-gray-300');
+                element.classList.add('bg-orchid-50/40', 'border-orchid-200');
+                element.classList.remove('bg-gray-50', 'border-gray-100');
+            }
+        }
+
+
+        /* ==================== TAB NAVIGATION SYSTEM ==================== */
+        function switchTab(tabIndex) {
+            appState.activeTab = tabIndex;
+            
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                const view = document.getElementById(`tab-content-${i}`);
+                
+                if (i === tabIndex) {
+                    btn.className = "px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-sm bg-orchid-main text-white";
+                    view.classList.remove('hidden');
+                    if (view.tagName === "DIV") {
+                        if (tabIndex === 2) {
+                            view.classList.add('grid');
+                        } else {
+                            view.classList.add('flex');
+                        }
+                    }
+                } else {
+                    btn.className = "px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-gray-500 hover:text-gray-800";
+                    view.classList.add('hidden');
+                    view.classList.remove('flex', 'grid');
+                }
+            }
+
+            // Trigger dimension calculations and re-render only when Tab 2 is visible
+            if (tabIndex === 2) {
+                setTimeout(resizeCanvas, 80);
+            }
+        }
+
+
+        /* ==================== CARD RANDOMIZERS (REROLLS) ==================== */
+        function rerollWarmups() {
+            if (appState.warmupPool.length < 2) return;
+            
+            let firstIdx = Math.floor(Math.random() * appState.warmupPool.length);
+            let secondIdx;
+            do {
+                secondIdx = Math.floor(Math.random() * appState.warmupPool.length);
+            } while (secondIdx === firstIdx && appState.warmupPool.length > 1);
+
+            appState.selectedWarmupQuestions = [
+                appState.warmupPool[firstIdx],
+                appState.warmupPool[secondIdx]
+            ];
+
+            document.getElementById('warmup-q1').innerText = appState.selectedWarmupQuestions[0];
+            document.getElementById('warmup-q2').innerText = appState.selectedWarmupQuestions[1];
+        }
+
+        function rerollVocabularies() {
+            if (appState.vocabularyPool.length < 6) return;
+
+            let selected = [];
+            let poolCopy = [...appState.vocabularyPool];
+
+            for (let i = 0; i < 6; i++) {
+                const randIdx = Math.floor(Math.random() * poolCopy.length);
+                selected.push(poolCopy[randIdx]);
+                poolCopy.splice(randIdx, 1);
+            }
+
+            appState.selectedVocabularies = selected;
+            document.getElementById('vocab-t1').innerText = selected[0];
+            document.getElementById('vocab-t2').innerText = selected[1];
+            document.getElementById('vocab-t3').innerText = selected[2];
+            document.getElementById('vocab-t4').innerText = selected[3];
+            document.getElementById('vocab-t5').innerText = selected[4];
+            document.getElementById('vocab-t6').innerText = selected[5];
+        }
+
+
+        /* ==================== FINISH EXAM & RESET ACTION ==================== */
+        function finishExam() {
+            pauseTimer();
+            
+            appState.timerTotalSeconds = 15 * 60;
+            appState.timerRemainingSeconds = 15 * 60;
+            updateTimerDisplay();
+            updateProgressBar();
+
+            appState.lastSpunIndex = -1;
+            appState.currentSpunIndex = -1;
+            document.getElementById('selected-topic-display').innerHTML = `
+                <span class="text-gray-400 italic font-normal text-base">Press the center SPIN button to randomise & allocate a main legal syllabus topic.</span>
+            `;
+            document.getElementById('followups-container').innerHTML = `
+                <div class="flex flex-col items-center justify-center text-center h-full text-gray-400 p-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-300 mb-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    <p class="text-xs">Follow-up inquiries mapped directly to the active syllabus segment will spawn here automatically upon completion of the wheel spin.</p>
+                </div>
+            `;
+
+            wheelConfig.currentAngle = 0;
+            // Guard calling drawing metrics during inactive display block states
+            if (appState.activeTab === 2) {
+                drawWheel();
+            }
+
+            rerollWarmups();
+            rerollVocabularies();
+
+            switchTab(1);
+
+            if (appState.audioInitialized) {
+                try {
+                    chordSynth.triggerAttackRelease(["C5", "F5", "A5", "C6"], "4n");
+                } catch (e) {}
+            }
+        }
+
+
+        /* ==================== GLOBAL CONFIG MODAL INTERACTION ==================== */
+        let activeSettingsTab = "warmups";
+
+        function toggleSettingsModal(open) {
+            const modal = document.getElementById('settings-modal');
+            const innerBox = modal.querySelector('div');
+            
+            if (open) {
+                document.getElementById('edit-warmups-input').value = appState.warmupPool.join('\n');
+                document.getElementById('edit-topics-input').value = JSON.stringify(appState.topicsPool, null, 2);
+                document.getElementById('edit-vocabularies-input').value = appState.vocabularyPool.join(', ');
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    innerBox.classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                innerBox.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function switchSettingsTab(tabKey) {
+            activeSettingsTab = tabKey;
+            const subtabs = ['warmups', 'topics', 'vocabularies'];
+            
+            subtabs.forEach(t => {
+                const btn = document.getElementById(`settings-btn-${t}`);
+                const pnl = document.getElementById(`settings-panel-${t}`);
+                
+                if (t === tabKey) {
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold bg-orchid-50 text-orchid-700 transition-all";
+                    pnl.classList.remove('hidden');
+                } else {
+                    btn.className = "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all";
+                    pnl.classList.add('hidden');
+                }
+            });
+        }
+
+        function saveConfigurations() {
+            const errBox = document.getElementById('json-error-box');
+            errBox.classList.add('hidden');
+            
+            const warmRaw = document.getElementById('edit-warmups-input').value;
+            const nextWarmups = warmRaw.split('\n')
+                .map(q => q.trim())
+                .filter(q => q.length > 0);
+
+            const topicsRaw = document.getElementById('edit-topics-input').value;
+            let nextTopics = [];
+            try {
+                nextTopics = JSON.parse(topicsRaw);
+                
+                if (!Array.isArray(nextTopics)) {
+                    throw new Error("Parsed JSON must be formed as a Root-Level JSON Array.");
+                }
+                if (nextTopics.length < 2) {
+                    throw new Error("You must include at least two topics in your syllabus.");
+                }
+                
+                nextTopics.forEach((tp, i) => {
+                    if (!tp.title || !tp.short || !Array.isArray(tp.questions)) {
+                        throw new Error(`Item ${i + 1} is missing a required property ("title", "short", or "questions" array).`);
+                    }
+                });
+            } catch (err) {
+                errBox.innerText = `JSON VALIDATION ERROR: ${err.message}`;
+                errBox.classList.remove('hidden');
+                switchSettingsTab('topics');
+                return;
+            }
+
+            const vocabRaw = document.getElementById('edit-vocabularies-input').value;
+            const nextVocab = vocabRaw.split(',')
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+
+            if (nextVocab.length < 6) {
+                errBox.innerText = `VALIDATION ERROR: You must provide at least 6 vocabulary terms for the 6 vocabulary cards.`;
+                errBox.classList.remove('hidden');
+                switchSettingsTab('vocabularies');
+                return;
+            }
+
+            appState.warmupPool = nextWarmups;
+            appState.topicsPool = nextTopics;
+            appState.vocabularyPool = nextVocab;
+
+            saveStorage();
+
+            rerollWarmups();
+            rerollVocabularies();
+            
+            if (appState.activeTab === 2) {
+                resizeCanvas();
+            }
+
+            toggleSettingsModal(false);
+        }
+
+        function restoreDefaults() {
+            if (confirm("Are you sure you want to revert all syllabus, questions, and terminology lists back to system defaults?")) {
+                appState.warmupPool = [...DEFAULT_WAR_UP_QUESTIONS];
+                appState.topicsPool = JSON.parse(JSON.stringify(DEFAULT_TOPICS));
+                appState.vocabularyPool = [...DEFAULT_VOCABULARY];
+                
+                saveStorage();
+
+                document.getElementById('edit-warmups-input').value = appState.warmupPool.join('\n');
+                document.getElementById('edit-topics-input').value = JSON.stringify(appState.topicsPool, null, 2);
+                document.getElementById('edit-vocabularies-input').value = appState.vocabularyPool.join(', ');
+
+                rerollWarmups();
+                rerollVocabularies();
+                
+                if (appState.activeTab === 2) {
+                    resizeCanvas();
+                }
+
+                toggleSettingsModal(false);
+            }
+        }
+
+
+        /* ==================== SYSTEM LAUNCHER ONLOAD ==================== */
+        window.onload = function () {
+            loadStorage();
+
+            rerollWarmups();
+            rerollVocabularies();
+
+            updateProgressBar();
+            switchTab(1);
+        }
+    </script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered successfully.', reg.scope))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
