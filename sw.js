@@ -1,4 +1,5 @@
-const CACHE_NAME = 'law-exam-suite-v1';
+// Incremented to v2 to force the tablet to clear the old layout cache
+const CACHE_NAME = 'law-exam-suite-v2'; 
 const ASSETS = [
   'index.html',
   'manifest.json',
@@ -12,6 +13,22 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
+    })
+  );
+});
+
+// Activate Lifecycle Event: Delete old caches (like v1)
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            console.log('Clearing old application cache...');
+            return caches.delete(cache);
+          }
+        })
+      );
     })
   );
 });
