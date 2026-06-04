@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#9d4edd",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "icons": [
     {
       "src": "https://placehold.co/192x192/9d4edd/ffffff/png?text=Law",
