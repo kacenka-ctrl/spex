@@ -59,57 +59,69 @@
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        /* Hide default number input arrows */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+/* Hide default number input arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
 
-        /* Soft custom scrollbars for interactive lists */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 9px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #d8b4fe;
-            border-radius: 9px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #9d4edd;
-        }
+/* Soft custom scrollbars for interactive lists */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 9px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #d8b4fe;
+    border-radius: 9px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9d4edd;
+}
 
-        /* Spinning Wheel Glow & Rotation Effects */
-        .wheel-shadow {
-            box-shadow: 0 10px 30px -5px rgba(157, 78, 221, 0.2);
-        }
+/* Spinning Wheel Glow & Rotation Effects */
+.wheel-shadow {
+    box-shadow: 0 10px 30px -5px rgba(157, 78, 221, 0.2);
+}
 
-        /* Pulsing animations */
-        @keyframes subtlePulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.95; }
-        }
-        .pulse-spin {
-            animation: subtlePulse 2s infinite ease-in-out;
-        }
+/* Pulsing animations */
+@keyframes subtlePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.95; }
+}
+.pulse-spin {
+    animation: subtlePulse 2s infinite ease-in-out;
+}
+
+/* THE MOBILE LANDSCAPE FIX: If screen height drops below 560px, unlock master scrolling */
+@media (max-height: 560px) {
+    body {
+        height: auto;
+        overflow-y: auto !important;
+    }
+    main {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
